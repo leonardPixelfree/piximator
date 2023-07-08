@@ -62,29 +62,83 @@ function initialize() {
 }
 
 function verzerr(){
-    drawSin();
+    drawCos();
     
-    copyImage();
+    verzerrImage();
 }
 
-function drawSin(){
-    for(let i = 0; i < 300; i++){
-        let colorNumber = (Math.sin(i * 0.1) * 0.5 +1) * 255;
-        canvas2d1.fillStyle = getColor(colorNumber, colorNumber, colorNumber);
-        canvas2d1.fillRect(i*3, 0, 3, 1000);
+function verzerrImage(){
+    let matrix = [];
+
+    for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
+        matrix.push([]);
+        for(let y = 0; y < canvasCopyHeight/copyInaccuracy; y++){
+            matrix[x].push(0);
+        }
     }
-}
+    
+    //verzerr eine box an pos 200/200 mit der größe 100/100 by moving it 40 up
+    let offsetX = 200;
+    let offsetY = 200;
+    let width = 100;
+    let height = 100;
+    let verzerrX = 0;
+    let verzerrY = 100;
+    for(let x = 0; x < width/copyInaccuracy; x++){
+        for(let y = 0; y < height/copyInaccuracy; y++){
+            let realX = x*copyInaccuracy+offsetX;
+            let realY = y*copyInaccuracy+offsetY;
 
-function copyImage(){
+            let pixelColor = getOrigColorAt(realX, realY);
+            console.log(realX + " " + realY + " " + pixelColor);
+
+            let realNewX = Math.floor((realX + verzerrX) / copyInaccuracy);
+            let realNewY = Math.floor((realY + verzerrY) / copyInaccuracy);
+
+            matrix[realNewX] [realNewY] = pixelColor;
+
+            zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY);
+        }
+    }
+
+
+    //drawing the matrix
     for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
         for(let y = 0; y < canvasCopyHeight/copyInaccuracy; y++){
             let usedX = x * copyInaccuracy;
             let usedY = y * copyInaccuracy;
 
-            let pixeldata = canvas2d1.getImageData(usedX, usedY, 1, 1).data;
-            let pixelColor = getColor(pixeldata[0], pixeldata[1], pixeldata[2]);
+            let pixelColor;
+
+            if(matrix[x][y] == 0){
+                pixelColor = getOrigColorAt(usedX, usedY);
+            }
+            else{
+                pixelColor = matrix[x][y];
+            }
             canvas2d2.fillStyle = pixelColor;
             canvas2d2.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
         }
     }
+
 }
+function zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY) {
+    for (let i = 0; i < verzerrY; i++) {
+        let zerr = Math.floor((realY + i) / copyInaccuracy);
+
+        if (matrix[realNewX][zerr] != 0) {
+            continue;
+        }
+        matrix[realNewX][zerr] = pixelColor;
+    }
+
+    for (let i = 0; i < verzerrX; i++) {
+        let zerr = Math.floor((realX + i) / copyInaccuracy);
+
+        if (matrix[zerr][realNewY] != 0) {
+            continue;
+        }
+        matrix[zerr][realNewY] = pixelColor;
+    }
+}
+

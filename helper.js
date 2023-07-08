@@ -26,3 +26,9 @@ function getColor(r, g, b){
 
     return "#" + rString + bString + gString;
 }
+
+function distance(x1, y1, x2, y2){
+    let xDiff = Math.abs(x1-x2);
+    let yDiff = Math.abs(y1-y2);
+    return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+}
