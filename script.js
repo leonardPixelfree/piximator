@@ -3,6 +3,7 @@ start();
 //variables
 var canvas2d1;
 var canvas2d2;
+var canvas2d3;
 var button1;
 var button2;
 var button3;
@@ -12,21 +13,16 @@ var button6;
 var button7;
 var button8;
 var button9;
+var text1;
+var text2;
+var text3;
+var text4;
+var text5;
 var textArea1;
 var fileUpload1;
 
 var intervall;
-
-let frame = 0;
-
-let speedsim = false;
-let speedSteps = 0;
-
-let totalEnergies = [];
-let avgEpsilon = [];
-let epsilonInflation = 0.0;
-
-let maxGraphWidth = 900;
+var image;
 
 function start() {
     initialize();
@@ -37,6 +33,8 @@ function initialize() {
     canvas2d1 = canvas1.getContext("2d");
     let canvas2 = document.getElementById("canvas2");
     canvas2d2 = canvas2.getContext("2d");
+    let canvas3 = document.getElementById("canvas3");
+    canvas2d3 = canvas3.getContext("2d");
     button1 = document.getElementById("BUTTON1_region");
     button2 = document.getElementById("BUTTON2_region");
     button3 = document.getElementById("BUTTON3_region");
@@ -46,11 +44,16 @@ function initialize() {
     button7 = document.getElementById("BUTTON7_region");
     button8 = document.getElementById("BUTTON8_region");
     button9 = document.getElementById("BUTTON9_region");
+    text1 = document.getElementById("text1");
+    text2 = document.getElementById("text2");
+    text3 = document.getElementById("text3");
+    text4 = document.getElementById("text4");
+    text5 = document.getElementById("text5");
     textArea1 = document.getElementById("TEXT_AREA1_region");
     fileUpload1 = document.getElementById("input1");
 
 
-    button1.onclick = function () { drawCos()() };
+    button1.onclick = function () { drawCos() };
     button2.onclick = function () { copyImage() };
     button3.onclick = function () { verzerr() };
     button4.onclick = function () { event4() };
@@ -59,7 +62,25 @@ function initialize() {
     button7.onclick = function () { event7() };
     button8.onclick = function () { event8()};
     button9.onclick = function () { event9()};
+    text1.addEventListener('change', zerrPositionChange);
+    text2.addEventListener('change', zerrPositionChange);
+    text5.addEventListener('change', updateInaccuracy);
     fileUpload1.addEventListener('change', uploadImage);
+}
+
+function updateInaccuracy(event){
+    let inac = text5.value * 1;
+    copyInaccuracy = inac;
+}
+
+function zerrPositionChange(){
+    canvas2d2.drawImage(canvas1, 0, 0);
+
+    let x = text1.value * 1;
+    let y = text2.value * 1;
+
+    canvas2d2.fillStyle = "#ff0000";
+    canvas2d2.fillRect(x, y, 10, 10);
 }
 
 function uploadImage(event){
@@ -69,10 +90,10 @@ function uploadImage(event){
      // Create a new FileReader
      const reader = new FileReader();
 
+     image = new Image();
+
      // When the FileReader has finished reading the file
      reader.onload = function(event) {
-         // Create a new image element
-         const image = new Image();
 
          // When the image has finished loading
          image.onload = function() {
@@ -97,6 +118,7 @@ function uploadImage(event){
 
              // Draw the image on the canvas with the resized dimensions
              canvas2d1.drawImage(image, x, y, drawWidth, drawHeight);
+             canvas2d2.drawImage(image, x, y, drawWidth, drawHeight);
          };
 
          // Set the image source to the data URL
@@ -118,13 +140,13 @@ function verzerr(){
         }
     }
     
-    //verzerr eine box an pos 200/200 mit der größe 100/100 by moving it 40 up
-    let offsetX = 200;
-    let offsetY = 200;
+    //verzerr eine box an der angegebenen pos mit der größe 100/100 by moving it 40 up
+    let offsetX = text1.value * 1;
+    let offsetY = text2.value * 1;
     let width = 100;
     let height = 100;
-    let verzerrX = 60;
-    let verzerrY = 100;
+    let verzerrX = text3.value * 1;
+    let verzerrY = text4.value * 1;
 
     let maxVerzerrDistance = distance(0, 0, verzerrX, verzerrY);
 
@@ -144,7 +166,6 @@ function verzerr(){
 
             zerrPixelsInBetweeen(verzerrY * verzerfactor, realY, matrix, realNewX, pixelColor, verzerrX * verzerfactor, realX, realNewY);
         }
-        console.log("image verzerrt");
     }
 
 
@@ -162,10 +183,11 @@ function verzerr(){
             else{
                 pixelColor = matrix[x][y];
             }
-            canvas2d2.fillStyle = pixelColor;
-            canvas2d2.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
+            canvas2d3.fillStyle = pixelColor;
+            canvas2d3.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
         }
     }
+    console.log("image verzerrt");
 }
 
 function zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY) {

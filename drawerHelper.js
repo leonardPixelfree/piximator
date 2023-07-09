@@ -7,8 +7,8 @@ function copyImage(){
             let usedY = y * copyInaccuracy;
 
             let pixelColor = getOrigColorAt(usedX, usedY);
-            canvas2d2.fillStyle = pixelColor;
-            canvas2d2.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
+            canvas2d3.fillStyle = pixelColor;
+            canvas2d3.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
         }
     }
     console.log("image copied");
