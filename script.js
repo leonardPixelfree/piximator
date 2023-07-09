@@ -199,7 +199,7 @@ function verzerr(){
     }
 
 
-    //drawing the matrix using webWorkers (for multiThreading)
+    //drawing the matrix
     let pixelDataPatch  = [];
     let counter = 0;
     let startTime = Date.now();
@@ -208,7 +208,10 @@ function verzerr(){
     let copyEndHeight = text7.value * 1;
     
     canvas2d3.fillStyle = "#ffffff";
-    canvas2d3.fillRect(0, 0, 1000, 1000);
+    canvas2d3.fillRect(0, 0, 1000, 1000);    
+    canvas2d3.drawImage(canvas1, 0, 0);
+
+    let d = 0;
 
     for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
         for(let y = copyStartHeight/copyInaccuracy; y < copyEndHeight/copyInaccuracy; y++){
@@ -218,7 +221,7 @@ function verzerr(){
             let pixelColor;
 
             if(matrix[x][y] == 0){
-                pixelColor = getOrigColorAt(usedX, usedY);
+                continue;
             }
             else{
                 pixelColor = matrix[x][y];
@@ -247,6 +250,7 @@ function verzerr(){
     drawPixels(pixelDataPatch);
     console.log("drawing took " + (Date.now() - startTime));
     console.log("image verzerrt");
+    console.log("d was " + d);
 }
 
 
