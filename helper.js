@@ -24,7 +24,7 @@ function getColor(r, g, b){
         gString = "0" + gString;
     }
 
-    return "#" + rString + bString + gString;
+    return "#" + rString + gString + bString;
 }
 
 function distance(x1, y1, x2, y2){

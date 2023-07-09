@@ -13,6 +13,7 @@ var button7;
 var button8;
 var button9;
 var textArea1;
+var fileUpload1;
 
 var intervall;
 
@@ -46,28 +47,68 @@ function initialize() {
     button8 = document.getElementById("BUTTON8_region");
     button9 = document.getElementById("BUTTON9_region");
     textArea1 = document.getElementById("TEXT_AREA1_region");
+    fileUpload1 = document.getElementById("input1");
 
 
-    button1.onclick = function () { verzerr() };
-    button2.onclick = function () { event2() };
-    button3.onclick = function () { event3() };
+    button1.onclick = function () { drawCos()() };
+    button2.onclick = function () { copyImage() };
+    button3.onclick = function () { verzerr() };
     button4.onclick = function () { event4() };
     button5.onclick = function () { event5()};
     button6.onclick = function () { event6() };
     button7.onclick = function () { event7() };
     button8.onclick = function () { event8()};
     button9.onclick = function () { event9()};
+    fileUpload1.addEventListener('change', uploadImage);
+}
 
-    console.log("energy is green \nepsilon (weights) is blue \nphi (structure) is red");
+function uploadImage(event){
+     // Get the uploaded file
+     const file = event.target.files[0];
+
+     // Create a new FileReader
+     const reader = new FileReader();
+
+     // When the FileReader has finished reading the file
+     reader.onload = function(event) {
+         // Create a new image element
+         const image = new Image();
+
+         // When the image has finished loading
+         image.onload = function() {
+             // Calculate the aspect ratio of the image and canvas
+             const aspectRatio = image.width / image.height;
+             const canvasAspectRatio = canvas1.width / canvas1.height;
+
+             let drawWidth, drawHeight;
+
+             // Compare the aspect ratios to determine the dimensions for drawing
+             if (aspectRatio > canvasAspectRatio) {
+                 drawWidth = canvas1.width;
+                 drawHeight = canvas1.width / aspectRatio;
+             } else {
+                 drawWidth = canvas1.height * aspectRatio;
+                 drawHeight = canvas1.height;
+             }
+
+             // Calculate the position to center the image on the canvas
+             const x = (canvas1.width - drawWidth) / 2;
+             const y = (canvas1.height - drawHeight) / 2;
+
+             // Draw the image on the canvas with the resized dimensions
+             canvas2d1.drawImage(image, x, y, drawWidth, drawHeight);
+         };
+
+         // Set the image source to the data URL
+         image.src = event.target.result;
+     };
+
+     // Read the file as a data URL
+     reader.readAsDataURL(file);
+    console.log("image uploaded");
 }
 
 function verzerr(){
-    drawCos();
-    
-    verzerrImage();
-}
-
-function verzerrImage(){
     let matrix = [];
 
     for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
@@ -82,23 +123,28 @@ function verzerrImage(){
     let offsetY = 200;
     let width = 100;
     let height = 100;
-    let verzerrX = 0;
+    let verzerrX = 60;
     let verzerrY = 100;
+
+    let maxVerzerrDistance = distance(0, 0, verzerrX, verzerrY);
+
     for(let x = 0; x < width/copyInaccuracy; x++){
         for(let y = 0; y < height/copyInaccuracy; y++){
             let realX = x*copyInaccuracy+offsetX;
             let realY = y*copyInaccuracy+offsetY;
 
             let pixelColor = getOrigColorAt(realX, realY);
-            console.log(realX + " " + realY + " " + pixelColor);
 
-            let realNewX = Math.floor((realX + verzerrX) / copyInaccuracy);
-            let realNewY = Math.floor((realY + verzerrY) / copyInaccuracy);
+            let verzerfactor = distance(realX, realY, offsetX+width/2, offsetY+height/2) / maxVerzerrDistance;
+
+            let realNewX = Math.floor((realX + verzerrX * verzerfactor) / copyInaccuracy);
+            let realNewY = Math.floor((realY + verzerrY * verzerfactor) / copyInaccuracy);
 
             matrix[realNewX] [realNewY] = pixelColor;
 
-            zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY);
+            zerrPixelsInBetweeen(verzerrY * verzerfactor, realY, matrix, realNewX, pixelColor, verzerrX * verzerfactor, realX, realNewY);
         }
+        console.log("image verzerrt");
     }
 
 
@@ -120,8 +166,8 @@ function verzerrImage(){
             canvas2d2.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
         }
     }
-
 }
+
 function zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY) {
     for (let i = 0; i < verzerrY; i++) {
         let zerr = Math.floor((realY + i) / copyInaccuracy);
