@@ -46,3 +46,10 @@ function drawCos(){
         }
     }
 }
+
+function drawLine(){
+    for(let x = 0; x < 300; x++){
+        canvas2d1.fillStyle = getColor(0, 300-x, x);
+        canvas2d1.fillRect(x*3, 300, 3, 10);
+    }
+}

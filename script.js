@@ -56,7 +56,7 @@ function initialize() {
     button1.onclick = function () { drawCos() };
     button2.onclick = function () { copyImage() };
     button3.onclick = function () { verzerr() };
-    button4.onclick = function () { event4() };
+    button4.onclick = function () { drawLine() };
     button5.onclick = function () { event5()};
     button6.onclick = function () { event6() };
     button7.onclick = function () { event7() };
@@ -74,6 +74,8 @@ function updateInaccuracy(event){
 }
 
 function zerrPositionChange(){
+    canvas2d2.fillStyle = "#ffffffff";
+    canvas2d2.fillRect(0, 0, 1000, 1000);
     canvas2d2.drawImage(canvas1, 0, 0);
 
     let x = text1.value * 1;
@@ -157,7 +159,7 @@ function verzerr(){
 
             let pixelColor = getOrigColorAt(realX, realY);
 
-            let verzerfactor = distance(realX, realY, offsetX+width/2, offsetY+height/2) / maxVerzerrDistance;
+            let verzerfactor = 1 - (distance(realX, realY, offsetX+width/2, offsetY+height/2) / maxVerzerrDistance);
 
             let realNewX = Math.floor((realX + verzerrX * verzerfactor) / copyInaccuracy);
             let realNewY = Math.floor((realY + verzerrY * verzerfactor) / copyInaccuracy);
