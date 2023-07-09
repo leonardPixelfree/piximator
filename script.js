@@ -58,7 +58,7 @@ function initialize() {
     button3.onclick = function () { verzerr() };
     button4.onclick = function () { drawLine() };
     button5.onclick = function () { event5()};
-    button6.onclick = function () { event6() };
+    button6.onclick = function () { webWorkerTest() };
     button7.onclick = function () { event7() };
     button8.onclick = function () { event8()};
     button9.onclick = function () { event9()};
@@ -114,13 +114,10 @@ function uploadImage(event){
                  drawHeight = canvas1.height;
              }
 
-             // Calculate the position to center the image on the canvas
-             const x = (canvas1.width - drawWidth) / 2;
-             const y = (canvas1.height - drawHeight) / 2;
-
              // Draw the image on the canvas with the resized dimensions
-             canvas2d1.drawImage(image, x, y, drawWidth, drawHeight);
-             canvas2d2.drawImage(image, x, y, drawWidth, drawHeight);
+             canvas2d1.drawImage(image, 0, 0, drawWidth, drawHeight);
+             canvas2d2.drawImage(image, 0, 0, drawWidth, drawHeight);
+             zerrPositionChange(null);
          };
 
          // Set the image source to the data URL
@@ -149,8 +146,9 @@ function verzerr(){
     let height = 100;
     let verzerrX = text3.value * 1;
     let verzerrY = text4.value * 1;
+    copyInaccuracy = text5.value * 1;
 
-    let maxVerzerrDistance = distance(0, 0, verzerrX, verzerrY);
+    let maxVerzerrDistance = distance(0, 0, width/2, height/2);
 
     for(let x = 0; x < width/copyInaccuracy; x++){
         for(let y = 0; y < height/copyInaccuracy; y++){
@@ -159,7 +157,8 @@ function verzerr(){
 
             let pixelColor = getOrigColorAt(realX, realY);
 
-            let verzerfactor = 1 - (distance(realX, realY, offsetX+width/2, offsetY+height/2) / maxVerzerrDistance);
+            let dist = distance(realX, realY, offsetX+width/2, offsetY+height/2);
+            let verzerfactor = 1 -  (dist/ maxVerzerrDistance);
 
             let realNewX = Math.floor((realX + verzerrX * verzerfactor) / copyInaccuracy);
             let realNewY = Math.floor((realY + verzerrY * verzerfactor) / copyInaccuracy);
@@ -171,7 +170,10 @@ function verzerr(){
     }
 
 
-    //drawing the matrix
+    //drawing the matrix using webWorkers (for multiThreading)
+    let pixelDataPatch  = [];
+    let counter = 0;
+    let startTime = Date.now();
     for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
         for(let y = 0; y < canvasCopyHeight/copyInaccuracy; y++){
             let usedX = x * copyInaccuracy;
@@ -185,12 +187,33 @@ function verzerr(){
             else{
                 pixelColor = matrix[x][y];
             }
-            canvas2d3.fillStyle = pixelColor;
-            canvas2d3.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
+
+            if(usePixelPatch){
+                let pixelData = new PixelData(usedX, usedY, copyInaccuracy, copyInaccuracy, pixelColor);
+                pixelDataPatch.push(pixelData);
+    
+                counter++;
+    
+                if(counter == pixelDataPatchSize){
+                    console.log("drawPatch");
+                    drawPixels(pixelDataPatch);
+                    pixelDataPatch = [];
+                    counter = 0;
+                }
+            }
+            else{
+                canvas2d3.fillStyle = pixelColor;
+                canvas2d3.fillRect(usedX, usedY, copyInaccuracy, copyInaccuracy);
+            }
+
         }
     }
+    drawPixels(pixelDataPatch);
+    console.log("drawing took " + (Date.now() - startTime));
     console.log("image verzerrt");
 }
+
+
 
 function zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY) {
     for (let i = 0; i < verzerrY; i++) {

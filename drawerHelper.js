@@ -33,6 +33,7 @@ function drawSin(){
             canvas2d1.fillRect(i*3, y*3, 3, 3);
         }
     }
+    zerrPositionChange(null);
 }
 
 function drawCos(){
@@ -45,11 +46,13 @@ function drawCos(){
             canvas2d1.fillRect(i*3, y*3, 3, 3);
         }
     }
+    zerrPositionChange(null);
 }
 
 function drawLine(){
     for(let x = 0; x < 300; x++){
         canvas2d1.fillStyle = getColor(0, 300-x, x);
-        canvas2d1.fillRect(x*3, 300, 3, 10);
+        canvas2d1.fillRect(x*3, 100, 3, 10);
     }
+    zerrPositionChange(null);
 }
