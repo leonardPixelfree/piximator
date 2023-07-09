@@ -18,6 +18,8 @@ var text2;
 var text3;
 var text4;
 var text5;
+var text6;
+var text7;
 var textArea1;
 var fileUpload1;
 
@@ -49,6 +51,8 @@ function initialize() {
     text3 = document.getElementById("text3");
     text4 = document.getElementById("text4");
     text5 = document.getElementById("text5");
+    text6 = document.getElementById("text6");
+    text7 = document.getElementById("text7");
     textArea1 = document.getElementById("TEXT_AREA1_region");
     fileUpload1 = document.getElementById("input1");
 
@@ -57,7 +61,7 @@ function initialize() {
     button2.onclick = function () { copyImage() };
     button3.onclick = function () { verzerr() };
     button4.onclick = function () { drawLine() };
-    button5.onclick = function () { event5()};
+    button5.onclick = function () { clearAll()};
     button6.onclick = function () { webWorkerTest() };
     button7.onclick = function () { event7() };
     button8.onclick = function () { event8()};
@@ -66,6 +70,32 @@ function initialize() {
     text2.addEventListener('change', zerrPositionChange);
     text5.addEventListener('change', updateInaccuracy);
     fileUpload1.addEventListener('change', uploadImage);
+
+    document.addEventListener('keypress', (event) => {
+        if (event.key == "w") {
+            text2.value = text2.value * 1 -1;
+            zerrPositionChange();
+        } else if (event.key == "s"){
+            text2.value = text2.value * 1 +1;
+            zerrPositionChange();
+        } else if (event.key == "a"){
+            text1.value = text1.value * 1 -1;
+            zerrPositionChange();
+        } else if (event.key == "d"){
+            text1.value = text1.value * 1 +1;
+            zerrPositionChange();
+        }
+      }, false);
+}
+
+function clearAll(){
+    canvas2d1.fillStyle = "#ffffffff";
+    canvas2d1.fillRect(0, 0, 1000, 1000);
+    canvas2d2.fillStyle = "#ffffffff";
+    canvas2d2.fillRect(0, 0, 1000, 1000);
+    canvas2d3.fillStyle = "#ffffffff";
+    canvas2d3.fillRect(0, 0, 1000, 1000);
+
 }
 
 function updateInaccuracy(event){
@@ -146,7 +176,6 @@ function verzerr(){
     let height = 100;
     let verzerrX = text3.value * 1;
     let verzerrY = text4.value * 1;
-    copyInaccuracy = text5.value * 1;
 
     let maxVerzerrDistance = distance(0, 0, width/2, height/2);
 
@@ -174,8 +203,15 @@ function verzerr(){
     let pixelDataPatch  = [];
     let counter = 0;
     let startTime = Date.now();
+
+    let copyStartHeight = text6.value * 1;
+    let copyEndHeight = text7.value * 1;
+    
+    canvas2d3.fillStyle = "#ffffff";
+    canvas2d3.fillRect(0, 0, 1000, 1000);
+
     for(let x = 0; x < canvasCopyWidth/copyInaccuracy; x++){
-        for(let y = 0; y < canvasCopyHeight/copyInaccuracy; y++){
+        for(let y = copyStartHeight/copyInaccuracy; y < copyEndHeight/copyInaccuracy; y++){
             let usedX = x * copyInaccuracy;
             let usedY = y * copyInaccuracy;
 
