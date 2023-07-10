@@ -20,6 +20,8 @@ var text4;
 var text5;
 var text6;
 var text7;
+var text8;
+var text9;
 var textArea1;
 var fileUpload1;
 
@@ -53,6 +55,8 @@ function initialize() {
     text5 = document.getElementById("text5");
     text6 = document.getElementById("text6");
     text7 = document.getElementById("text7");
+    text8 = document.getElementById("text8");
+    text9 = document.getElementById("text9");
     textArea1 = document.getElementById("TEXT_AREA1_region");
     fileUpload1 = document.getElementById("input1");
 
@@ -111,8 +115,10 @@ function zerrPositionChange(){
     let x = text1.value * 1;
     let y = text2.value * 1;
 
-    canvas2d2.fillStyle = "#ff0000";
-    canvas2d2.fillRect(x, y, 10, 10);
+    let zerrWidth = text8.value * 1;
+    let zerrHeight = text9.value * 1;
+    canvas2d2.fillStyle = "#ff0000aa";
+    canvas2d2.fillRect(x, y, zerrWidth, zerrHeight);
 }
 
 function uploadImage(event){
@@ -169,24 +175,24 @@ function verzerr(){
         }
     }
     
-    //verzerr eine box an der angegebenen pos mit der größe 100/100 by moving it 40 up
+    //verzerr eine box an der angegebenen pos
     let offsetX = text1.value * 1;
     let offsetY = text2.value * 1;
-    let width = 100;
-    let height = 100;
+    let zerrWidth = text8.value * 1;
+    let zerrHeight = text9.value * 1;
     let verzerrX = text3.value * 1;
     let verzerrY = text4.value * 1;
 
-    let maxVerzerrDistance = distance(0, 0, width/2, height/2);
+    let maxVerzerrDistance = distance(0, 0, zerrWidth/2, zerrHeight/2);
 
-    for(let x = 0; x < width/copyInaccuracy; x++){
-        for(let y = 0; y < height/copyInaccuracy; y++){
+    for(let x = 0; x < zerrWidth/copyInaccuracy; x++){
+        for(let y = 0; y < zerrHeight/copyInaccuracy; y++){
             let realX = x*copyInaccuracy+offsetX;
             let realY = y*copyInaccuracy+offsetY;
 
             let pixelColor = getOrigColorAt(realX, realY);
 
-            let dist = distance(realX, realY, offsetX+width/2, offsetY+height/2);
+            let dist = distance(realX, realY, offsetX+zerrWidth/2, offsetY+zerrHeight/2);
             let verzerfactor = 1 -  (dist/ maxVerzerrDistance);
 
             let realNewX = Math.floor((realX + verzerrX * verzerfactor) / copyInaccuracy);

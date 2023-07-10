@@ -735,7 +735,7 @@ width: 100%;
 
 .Left_region{
 flex-direction: column;
-gap: 40px;
+gap: 10px;
 pointer-events: auto;
 display: flex;
 justify-content: flex-start;
