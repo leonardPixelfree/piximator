@@ -74,6 +74,12 @@ function initialize() {
     text2.addEventListener('change', zerrPositionChange);
     text5.addEventListener('change', updateInaccuracy);
     fileUpload1.addEventListener('change', uploadImage);
+    canvas2.addEventListener("mousedown", handleCanvas2Click);
+    canvas2.addEventListener("wheel", handleCanvas2Scroll);
+
+    canvas2.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
 
     document.addEventListener('keypress', (event) => {
         if (event.key == "w") {
@@ -90,6 +96,14 @@ function initialize() {
             zerrPositionChange();
         }
       }, false);
+}
+
+function handleCanvas2Click(event){
+    canvasClicked(event);
+}
+
+function handleCanvas2Scroll(event){
+    canvasScrolled(event);
 }
 
 function clearAll(){
