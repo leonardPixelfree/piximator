@@ -12,6 +12,8 @@ function copyImage(){
         }
     }
     console.log("image copied");
+
+    drawZerrPoints();
 }
 
 function getOrigColorAt(x, y) {

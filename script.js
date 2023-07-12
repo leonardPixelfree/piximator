@@ -69,7 +69,7 @@ function initialize() {
     button6.onclick = function () { webWorkerTest() };
     button7.onclick = function () { event7() };
     button8.onclick = function () { event8()};
-    button9.onclick = function () { event9()};
+    button9.onclick = function () { deleteZP()};
     text1.addEventListener('change', zerrPositionChange);
     text2.addEventListener('change', zerrPositionChange);
     text5.addEventListener('change', updateInaccuracy);
@@ -96,6 +96,10 @@ function initialize() {
             zerrPositionChange();
         }
       }, false);
+}
+
+function deleteZP(){
+    deleteSelectedZerrpoint();
 }
 
 function handleCanvas2Click(event){
@@ -150,19 +154,7 @@ function uploadImage(event){
          // When the image has finished loading
          image.onload = function() {
              // Calculate the aspect ratio of the image and canvas
-             const aspectRatio = image.width / image.height;
-             const canvasAspectRatio = canvas1.width / canvas1.height;
-
-             let drawWidth, drawHeight;
-
-             // Compare the aspect ratios to determine the dimensions for drawing
-             if (aspectRatio > canvasAspectRatio) {
-                 drawWidth = canvas1.width;
-                 drawHeight = canvas1.width / aspectRatio;
-             } else {
-                 drawWidth = canvas1.height * aspectRatio;
-                 drawHeight = canvas1.height;
-             }
+             let { drawWidth, drawHeight } = getAspectRatio();
 
              // Draw the image on the canvas with the resized dimensions
              canvas2d1.drawImage(image, 0, 0, drawWidth, drawHeight);
@@ -177,6 +169,23 @@ function uploadImage(event){
      // Read the file as a data URL
      reader.readAsDataURL(file);
     console.log("image uploaded");
+}
+
+function getAspectRatio() {
+    const aspectRatio = image.width / image.height;
+    const canvasAspectRatio = canvas1.width / canvas1.height;
+
+    let drawWidth, drawHeight;
+
+    // Compare the aspect ratios to determine the dimensions for drawing
+    if (aspectRatio > canvasAspectRatio) {
+        drawWidth = canvas1.width;
+        drawHeight = canvas1.width / aspectRatio;
+    } else {
+        drawWidth = canvas1.height * aspectRatio;
+        drawHeight = canvas1.height;
+    }
+    return { drawWidth, drawHeight };
 }
 
 function verzerr(){
