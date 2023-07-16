@@ -221,12 +221,26 @@ function verzerr(){
             let realNewX = Math.floor((realX + verzerrX * verzerfactor) / copyInaccuracy);
             let realNewY = Math.floor((realY + verzerrY * verzerfactor) / copyInaccuracy);
 
+            if(!isPartOfMatrix(realNewX, realNewY)){
+                continue;
+            }
+
             matrix[realNewX] [realNewY] = pixelColor;
 
             zerrPixelsInBetweeen(verzerrY * verzerfactor, realY, matrix, realNewX, pixelColor, verzerrX * verzerfactor, realX, realNewY);
         }
     }
 
+    function isPartOfMatrix(x, y){
+        if(x < 0 || x >= matrix.length){
+            return false;
+        }
+        if(y < 0 || y >= matrix[0].length){
+            return false;
+        }
+
+        return true;
+    }
 
     //drawing the matrix
     let pixelDataPatch  = [];
@@ -285,19 +299,22 @@ function verzerr(){
 
 
 function zerrPixelsInBetweeen(verzerrY, realY, matrix, realNewX, pixelColor, verzerrX, realX, realNewY) {
-    for (let i = 0; i < verzerrY; i++) {
-        let zerr = Math.floor((realY + i) / copyInaccuracy);
+    let yFactor = verzerrY >= 0 ? 1 : -1;
+    for (let i = 0; i < Math.abs(verzerrY); i++) {
+        let zerr = Math.floor((realY + i * yFactor) / copyInaccuracy);
 
-        if (matrix[realNewX][zerr] != 0) {
+        //dont know why, but the check 'verzerrY > 0' fixes the zerring fort negative value
+        if (verzerrY > 0 && matrix[realNewX][zerr] != 0) {
             continue;
         }
         matrix[realNewX][zerr] = pixelColor;
     }
 
-    for (let i = 0; i < verzerrX; i++) {
-        let zerr = Math.floor((realX + i) / copyInaccuracy);
+    let xFactor = verzerrY >= 0 ? 1 : -1;
+    for (let i = 0; i < Math.abs(verzerrX); i++) {
+        let zerr = Math.floor((realX + i * xFactor) / copyInaccuracy);
 
-        if (matrix[zerr][realNewY] != 0) {
+        if (verzerrY > 0 && matrix[zerr][realNewY] != 0) {
             continue;
         }
         matrix[zerr][realNewY] = pixelColor;
